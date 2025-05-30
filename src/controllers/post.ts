@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import Post from '../models/post';
-import User from '../models/user';
+import { Request, Response } from "express";
+import Post from "../models/post";
+import User from "../models/user";
 
 const getPost = async (req: Request, res: Response) => {
   try {
@@ -21,20 +21,20 @@ const getPost = async (req: Request, res: Response) => {
 const updatePost = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const{ title , content} = req.body;
+    const { title, content } = req.body;
     const post = await Post.findByIdAndUpdate(
       id,
       {
         $set: {
           title,
           content,
-          edited: true, 
+          edited: true,
         },
       },
       { new: true }
     );
     if (!post) {
-       res.status(404).json({
+      res.status(404).json({
         message: "Post not found",
         error: true,
       });
@@ -58,7 +58,7 @@ const getPostById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const post = await Post.findById(id);
     if (!post) {
-       res.status(404).json({
+      res.status(404).json({
         message: "Post not found",
         error: true,
       });
@@ -80,7 +80,6 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, content, author } = req.body;
 
-   
     if (!title || !content || !author) {
       res.status(400).json({
         message: "Title, content, and author (user ID) are required.",
@@ -89,7 +88,6 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-   
     const existingUser = await User.findById(author);
     if (!existingUser) {
       res.status(404).json({
@@ -99,7 +97,6 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    
     const newPost = new Post({
       title,
       content,
@@ -114,7 +111,6 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
       data: newPost,
       error: false,
     });
-
   } catch (error: any) {
     res.status(500).json({
       message: "Error creating post",
@@ -124,12 +120,12 @@ const createPost = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const deletePost = async (req:Request, res: Response) => {
+const deletePost = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const post = await Post.findByIdAndDelete(id);
     if (!post) {
-       res.status(404).json({
+      res.status(404).json({
         message: "Post not found",
         error: true,
       });
@@ -148,37 +144,34 @@ const deletePost = async (req:Request, res: Response) => {
 };
 
 const likePost = async (req: Request, res: Response) => {
-    try {
-        const postId = req.params.id;
-        const { userId } = req.body;
+  try {
+    const postId = req.params.postId;
+    const { userId } = req.body;
 
-         const post = await Post.findByIdAndUpdate(
-            postId,
-            {
-                $addToSet: { "likes": userId } 
-            },
-            { new: true}
-         );
-         if (!post) {
-            res.status(404).json({
-                message: "Post not found",
-                error: true
-            });
-            return;
-         }
-         res.status(200).json({
-            message: "Like has been added to the post",
-            data: post,
-            error: false
-        });
-    } 
-    catch (error: any)
-     {
-        res.status(400).json({
-            error: error.message
-        });
-    }
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $addToSet: { likes: userId },
+      },
+      { new: true }
+    );
+    if (!post) {
+      res.status(404).json({
+        message: "Post not found",
+        error: true,
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Like has been added to the post",
+      data: post,
+      error: false,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      error: error.message,
+    });
+  }
 };
 
-  
-export { getPost, getPostById, deletePost , updatePost, createPost , likePost };
+export { getPost, getPostById, deletePost, updatePost, createPost, likePost };
