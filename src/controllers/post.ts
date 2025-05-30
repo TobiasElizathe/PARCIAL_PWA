@@ -147,39 +147,37 @@ const deletePost = async (req:Request, res: Response) => {
   }
 };
 
-const likePost = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { postId } = req.params;       // <-- params, no body
-    const { userId } = req.body;
+const likePost = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+        const { userId } = req.body;
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      res.status(404).json({ message: "Post not found", error: true });
-      return;
-    }
-
-    const alreadyLiked = post.likes.includes(userId);
-
-    if (alreadyLiked) {
-      res.status(400).json({
-        message: "User already liked this post",
-        error: true,
-      });
-      return;
-    }
-
-    post.likes.push(userId);
-    await post.save();
-
-    res.status(200).json({
-      message: "Like added successfully",
-      data: post,
-      error: false,
-    });
-
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
+         const post = await Post.findByIdAndUpdate(
+            postId,
+            {
+                $addToSet: { "likes": userId } 
+            },
+            { new: true}
+         );
+         if (!post) {
+            res.status(404).json({
+                message: "Post not found",
+                error: true
+            });
+            return;
+         }
+         res.status(200).json({
+            message: "Like has been added to the post",
+            data: post,
+            error: false
+        });
+    } 
+    catch (error: any)
+     {
+        res.status(400).json({
+            error: error.message
+        });
+    }
 };
 
   
