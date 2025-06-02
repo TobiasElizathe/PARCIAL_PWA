@@ -146,10 +146,10 @@ const deletePost = async (req: Request, res: Response) => {
 
 const likePost = async (req: Request, res: Response) => {
   try {
-    const postId = req.params.postId;
+    const id = req.params.id;
     const { userId } = req.body;
     const post = await Post.findByIdAndUpdate(
-      postId,
+      id,
       {
         $addToSet: { likes: userId },
       },
