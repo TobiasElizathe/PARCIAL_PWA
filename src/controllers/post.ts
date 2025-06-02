@@ -146,16 +146,16 @@ const deletePost = async (req: Request, res: Response) => {
 
 const likePost = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const postId = req.params.postId;
     const { userId } = req.body;
-
     const post = await Post.findByIdAndUpdate(
-      id,
+      postId,
       {
         $addToSet: { likes: userId },
       },
       { new: true }
     );
+
     if (!post) {
       res.status(404).json({
         message: "Post not found",
@@ -163,14 +163,16 @@ const likePost = async (req: Request, res: Response) => {
       });
       return;
     }
+
     res.status(200).json({
-      message: "Like has been added to the post",
+      message: "Post fetched successfully",
       data: post,
       error: false,
     });
   } catch (error: any) {
     res.status(400).json({
-      error: error.message,
+      message: error.message || "Error fetching post",
+      error: true,
     });
   }
 };
