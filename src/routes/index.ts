@@ -1,13 +1,14 @@
 import express from "express";
-import userRouter from './users/user'; // Importamos el router de usuarios
-import postRouter from './posts/post'; // Importamos el router de categorias
+import userRouter from './users/user'; 
+import postRouter from './posts/post'; 
 
 
 
-const router = express.Router(); // Creamos un router de express    
+const router = express.Router();    
 
-router.use("/users", userRouter); // Usamos el router de usuarios para la ruta /users
-router.use("/posts", postRouter); // Usamos el router de usuarios para la ruta /categories
+router.use("/users", userRouter); 
+router.use("/posts", postRouter); 
 
-export default router; // Exportamos el router para que pueda ser utilizado en otras partes de la aplicación
+export default router; 
 
+    

@@ -4,16 +4,15 @@ import User from "../models/user";
 
 const getPost = async (req: Request, res: Response) => {
   try {
-    const post = await Post.find({});
+    const posts = await Post.find().populate("author").populate("likes");
     res.status(200).json({
-      message: "Post fetched successfully",
-      data: post,
+      message: "Posts fetched successfully",
+      data: posts,
       error: false,
     });
   } catch (error: any) {
     res.status(400).json({
-      message: "Error fetching posts",
-      error: true,
+      error: error.message,
     });
   }
 };
@@ -56,7 +55,8 @@ const updatePost = async (req: Request, res: Response) => {
 const getPostById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).populate("author").populate("likes");
+
     if (!post) {
       res.status(404).json({
         message: "Post not found",
@@ -64,8 +64,9 @@ const getPostById = async (req: Request, res: Response) => {
       });
       return;
     }
+
     res.status(200).json({
-      message: "Post fetched",
+      message: "Post fetched successfully",
       data: post,
       error: false,
     });
@@ -143,38 +144,34 @@ const deletePost = async (req: Request, res: Response) => {
   }
 };
 
-const likePost = async (req: Request, res: Response): Promise<void> => {
+const likePost = async (req: Request, res: Response) => {
   try {
-    const { postId } = req.params; // <-- params, no body
+    const { id } = req.params;
     const { userId } = req.body;
 
-    const post = await Post.findById(postId);
+    const post = await Post.findByIdAndUpdate(
+      id,
+      {
+        $addToSet: { likes: userId },
+      },
+      { new: true }
+    );
     if (!post) {
-      res.status(404).json({ message: "Post not found", error: true });
-      return;
-    }
-
-    const alreadyLiked = post.likes.includes(userId);
-
-    if (alreadyLiked) {
-      res.status(400).json({
-        message: "User already liked this post",
+      res.status(404).json({
+        message: "Post not found",
         error: true,
       });
       return;
     }
-
-    post.likes.push(userId);
-    await post.save();
-
     res.status(200).json({
-      message: "Like added successfully",
+      message: "Like has been added to the post",
       data: post,
       error: false,
     });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({
+      error: error.message,
+    });
   }
 };
-
 export { getPost, getPostById, deletePost, updatePost, createPost, likePost };

@@ -1,12 +1,11 @@
-
-import mongoose, { Document , Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { User } from "./user";
 
 export interface Post extends Document {
   title: string;
   content: string;
   author: User;
-    likes: User[];
+  likes: User[];
   edited: boolean;
   createdAt: Date;
 }
@@ -23,23 +22,24 @@ const postSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: "User",   
+      ref: "User",
       required: true,
     },
-    likes: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: [],   
-    }],
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     edited: {
       type: Boolean,
       required: true,
       default: false,
     },
-    
   },
   {
-    timestamps: true,  
+    timestamps: true,
   }
 );
 
