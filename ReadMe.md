@@ -5,3 +5,5 @@ el sistema se basa en usarios que tiene posteos y estos usuarios se pueden agreg
 para correr el servidor se corre en la terminal el comando npm run dev
 
 las dependecias usadas fueron nodemon , yarn , express , dotenv , cors y mongoose
+
+osea se debe clonar el repo y ejecutar el npm install para descargar las dependencias 
